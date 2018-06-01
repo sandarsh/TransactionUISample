@@ -1,0 +1,25 @@
+body {
+    padding-top: 40px;
+    padding-bottom: 60px;
+}
+
+.navbar-inverse .navbar-brand {
+    color: white;
+}
+
+.main-heading {
+    text-align: center;
+}
+
+.bottom-buttons {
+    text-align: center;
+}
+
+.form-control:focus {
+    border-color: #66afe9;
+    outline: 2px;
+    -webkit-box-shadow: None;
+    box-shadow: None;
+}
+
+
