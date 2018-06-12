@@ -6,38 +6,39 @@
 
   function MainController() {
     let vm = this;
-    vm.showLoginPopup = function() {
-      console.log("Here");
-    }
+  //  Additional functionality for the main page here
   }
 
-  function PaymentFormController() {
+  function PaymentFormController($location, $route, PaymentService) {
     let vm = this;
-    let amountToFill = 0;
+    let amountAbsValue;
+    let isEmailPopperTriggered;
+    let isAmountPopperTriggered;
 
-    let isEmailPopperTriggered = false;
-    let isAmountPopperTriggered = false;
-
-    vm.isEmailValid = false;
-    vm.isAmountValid = false;
-    vm.isPaymentReasonValid = false;
-    vm.currencyType = 'USD';
-    vm.isReasonSelected = false;
-    vm.transactionReason;
+    function init() {
+      amountAbsValue = '';
+      vm.amount = amountAbsValue;
+      vm.email = "";
+      vm.message = "";
+      vm.transactionReason = "";
+      isEmailPopperTriggered = false;
+      isAmountPopperTriggered = false;
+      vm.isEmailValid = false;
+      vm.isAmountValid = false;
+      vm.isPaymentReasonValid = false;
+      vm.showLoader = false;
+      vm.currencyType = 'USD';
+      vm.isReasonSelected = false;
+      vm.transactionReason = '';
+      vm.isPaymentSuccessful = false;
+      vm.isPaymentFailed = false;
+    }
 
     vm.saveTransactionReason = function() {
       vm.isReasonSelected = true;
-      console.log(vm.transactionReason);
-      console.log('Email', vm.isEmailValid);
-      console.log('Amount', vm.isAmountValid);
-      console.log('Selected', vm.isReasonSelected);
     };
 
     vm.validateEmail = function() {
-      vm.emailValidationStyle = {
-        "border-color": "#c12e2a",
-        "border-width" : "2px"
-      };
       let email = vm.email;
       const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
       vm.isEmailValid = re.test(email);
@@ -75,39 +76,33 @@
     };
 
     vm.transformCurrency = function(toLocal) {
+      if (!vm.isAmountValid) {
+        return;
+      }
       if (toLocal) {
         let finalNum;
         switch (vm.currencyType) {
           case 'USD':
-            finalNum = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'}).format(amountToFill);
-            // console.log(finalNum);
+            finalNum = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'}).format(amountAbsValue);
             break;
           case 'EUR':
-            finalNum = new Intl.NumberFormat('en-EU', {style: 'currency', currency: 'EUR'}).format(amountToFill);
-            // console.log(finalNum);
+            finalNum = new Intl.NumberFormat('en-EU', {style: 'currency', currency: 'EUR'}).format(amountAbsValue);
             break;
           case 'JPY':
-            finalNum = new Intl.NumberFormat('ja-JP', {style: 'currency', currency: 'JPY'}).format(amountToFill);
-            // console.log(finalNum);
+            finalNum = new Intl.NumberFormat('ja-JP', {style: 'currency', currency: 'JPY'}).format(amountAbsValue);
             break;
         }
         vm.amount = finalNum;
       } else {
-        vm.amount = amountToFill;
+        vm.amount = amountAbsValue;
       }
-      vm.isAmountValid = true;
     };
 
     vm.validateAmount = function() {
-      vm.amtValidationStyle = {
-        "border-color": "#c12e2a",
-        "border-width" : "2px"
-      };
-
-      let amt = vm.amount;
-      amt = +amt;
-      if (isNaN(amt)) {
-        console.log('Invalid');
+      let currAmount = vm.amount;
+      let convertedAmt = +currAmount;
+      if(isNaN(convertedAmt) || currAmount === '') {
+        vm.isAmountValid = false;
         vm.amtValidationStyle = {
           "border-color": "#c12e2a",
           "border-width" : "2px"
@@ -120,14 +115,13 @@
               container: "body",
               placement: "right",
               trigger: "manual",
-              content: "Invalid amount entered. Please enter a valid amount."
+              content: "Invalid amount entered. Please enter a valid amount. Only numbers and decimal allowed."
             });
             $(this).popover('show');
           })
         }
-        return false;
-
       } else {
+        vm.isAmountValid = true;
         vm.amtValidationStyle = {
           "border-color": "#ccc"
         };
@@ -135,12 +129,47 @@
         $('#amount').each(function(){
           $(this).popover('hide');
         });
-        amountToFill = amt.toFixed(2);
-        // console.log(amountToFill);
-        return true;
+        amountAbsValue = convertedAmt.toFixed(2);
       }
-    }
+    };
 
+    vm.clear = function() {
+      init();
+    };
 
+    vm.submit = function () {
+      if(!vm.isEmailValid || !vm.isAmountValid || !vm.isReasonSelected) {
+        vm.validateAmount();
+        vm.validateEmail();
+        return;
+      }
+      vm.showLoader = true;
+      let paymentDetails = {
+        email: vm.email,
+        amount: vm.amount,
+        message: vm.message,
+        reason: vm.transactionReason,
+        currency: vm.currencyType
+      };
+      vm.blur = {
+        "filter": "blur(5px)",
+        "opacity": "0.2"
+      };
+      PaymentService
+        .pay(paymentDetails)
+        .then(function() {
+          vm.isPaymentSuccessful = true;
+          vm.showLoader = false;
+        }, function() {
+          vm.isPaymentFailed = true;
+          vm.showLoader = false;
+        })
+    };
+
+    vm.reload = function() {
+      $route.reload();
+    };
+
+    init();
   }
 })();

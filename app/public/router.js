@@ -15,6 +15,11 @@
         controller: 'PaymentFormController',
         controllerAs: 'model'
       })
+      .when('/transaction_history', {
+        templateUrl: 'views/user/transactions.view.client.html',
+        controller: 'TransactionHistoryController',
+        controllerAs: 'model'
+      })
       .otherwise({
         redirectTo: '/'
       })

@@ -1,3 +1,3 @@
 (function () {
-  angular.module('SampleUI', ['ngRoute']);
+  angular.module('SampleUI', ['ngRoute', 'infinite-scroll']);
 }());
