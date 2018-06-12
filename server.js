@@ -20,6 +20,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api', routes);
 app.use('/', express.static(`${__dirname}/app/public`));
 
-const PORT = process.env.NODE_PORT;
+const PORT = process.env.PORT || process.env.NODE_PORT;
 
 app.listen(PORT, () => (logger.info('Listening on port:', PORT)));
