@@ -1,0 +1,54 @@
+body {
+    padding-top: 40px;
+    padding-bottom: 60px;
+}
+
+.navbar-inverse .navbar-brand {
+    color: white;
+}
+
+.main-heading {
+    text-align: center;
+}
+
+.bottom-buttons {
+    text-align: center;
+}
+
+.form-control:focus {
+    border-color: #66afe9;
+    outline: 2px;
+    -webkit-box-shadow: None;
+    box-shadow: None;
+}
+
+.loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+}
+
+.display-pad {
+    padding-top: 150px;
+}
+
+.alert-success {
+    color: #3c763d;
+    text-align: center;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.table {
+    text-align: center;
+}
+
+
+.table>thead>tr>th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+    text-align: center;
+}
+
