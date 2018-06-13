@@ -5,9 +5,6 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "pretest": "eslint --ignore-path .eslintignore .",
-    "test": "./node_modules/.bin/mocha",
-    "cover": "./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha"
   },
   "repository": {
     "type": "git",
